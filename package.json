@@ -1,0 +1,35 @@
+{
+  "name": "orangehrm-automation-testing-proj",
+  "version": "1.0.0",
+  "description": "This task is designed to evaluate your capability in handling test case documentation, architecting a scalable end-to-end automation framework, and showcasing hands-on automation proficiency.",
+  "homepage": "https://github.com/thienng-it/demo-playwright-automation-OrangeHRM#readme",
+  "bugs": {
+    "url": "https://github.com/thienng-it/demo-playwright-automation-OrangeHRM/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thienng-it/demo-playwright-automation-OrangeHRM.git"
+  },
+  "license": "ISC",
+  "author": "Nguyen Thai Minh Thien",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test:chrome": "playwright test --config=e2e-orangehrm.config.ts --project=Chromium",
+    "test:firefox": "playwright test --config=e2e-orangehrm.config.ts --project=Firefox",
+    "test:webkit": "playwright test --config=e2e-orangehrm.config.ts --project=Webkit",
+    "test:all": "playwright test --config=e2e-orangehrm.config.ts",
+    "test:chrome:headed": "playwright test --config=e2e-orangehrm.config.ts --project=Chromium --headed",
+    "test:firefox:headed": "playwright test --config=e2e-orangehrm.config.ts --project=Firefox --headed",
+    "test:webkit:headed": "playwright test --config=e2e-orangehrm.config.ts --project=Webkit --headed",
+    "test:all:headed": "playwright test --config=e2e-orangehrm.config.ts --headed",
+    "test:e2e": "playwright test --config=e2e-orangehrm.config.ts --reporter=allure-playwright --project=chromium && allure generate allure-results -o allure-report --clean && allure open allure-report"
+  },
+  "dependencies": {
+    "prettier": "^3.6.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.1",
+    "allure-playwright": "^3.3.2"
+  }
+}
