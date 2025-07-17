@@ -5,7 +5,9 @@ import * as os from "node:os"
 const config: PlaywrightTestConfig = {
     fullyParallel: true, // run tests in parallel
     forbidOnly: !!process.env.CI, // fail if there are 'test.only'
-    reporter: "allure-playwright",
+    reporter: [
+        ["allure-playwright", { outputFolder: 'my-allure-results'}]
+    ],
     /* Retry on CI only */
     retries: process.env.CI ? 2 : 0,
     /* Opt out of parallel tests on CI. */

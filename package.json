@@ -23,7 +23,10 @@
     "test:firefox:headed": "playwright test --config=e2e-orangehrm.config.ts --project=Firefox --headed",
     "test:webkit:headed": "playwright test --config=e2e-orangehrm.config.ts --project=Webkit --headed",
     "test:all:headed": "playwright test --config=e2e-orangehrm.config.ts --headed",
-    "test:e2e": "playwright test --config=e2e-orangehrm.config.ts --reporter=allure-playwright --project=chromium && allure generate allure-results -o allure-report --clean && allure open allure-report"
+    "test": "playwright test --config=e2e-orangehrm.config.ts",
+    "allure:generate": "allure generate allure-results --clean -o allure-report",
+    "allure:open": "allure open allure-report",
+    "test:allure": "npm run test ; npm run allure:generate && npm run allure:open"
   },
   "dependencies": {
     "prettier": "^3.6.2"
