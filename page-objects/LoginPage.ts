@@ -1,100 +1,139 @@
 import {Page, Locator, expect} from '@playwright/test'
-
+import {URLs} from '../constants/urls'
 
 export class LoginPage {
     private readonly page: Page
-    private readonly usernameInput: Locator
-    private readonly passwordInput: Locator
+
+    // Login section
+    private readonly loginUsernameInput: Locator
+    private readonly loginPasswordInput: Locator
     private readonly loginButton: Locator
-    private readonly errorMessage: Locator
-    private readonly errorMessageEmptyUsername: Locator
-    private readonly errorMessageEmptyPassword: Locator
+    private readonly loginErrorMessage: Locator
+    private readonly loginErrorUsername: Locator
+    private readonly loginErrorPassword: Locator
+
+    // Reset password section
     private readonly resetPasswordLink: Locator
     private readonly resetPasswordHeader: Locator
-    private readonly resetPasswordButton: Locator
     private readonly resetPasswordUsernameInput: Locator
+    private readonly resetPasswordSubmitButton: Locator
     private readonly resetPasswordCancelButton: Locator
-    private readonly resetPasswordMessage: Locator
+    private readonly resetPasswordSuccessMessage: Locator
 
     constructor(page: Page) {
         this.page = page
-        this.usernameInput = page.locator("input[name='username']")
-        this.passwordInput = page.locator("input[type='password']")
+
+        // Login form
+        this.loginUsernameInput = page.locator("input[name='username']")
+        this.loginPasswordInput = page.locator("input[type='password']")
         this.loginButton = page.locator("button[type='submit']")
-        this.errorMessage = page.locator('div[role="alert"]')
-        this.errorMessageEmptyUsername = page.locator('div.oxd-form-row:nth-child(2) > div:nth-child(1) > span:nth-child(3)')
-        this.errorMessageEmptyPassword = page.locator('div.oxd-form-row:nth-child(3) > div:nth-child(1) > span:nth-child(3)')
+        this.loginErrorMessage = page.locator('div[role="alert"]')
+        this.loginErrorUsername = page.locator('div.oxd-form-row:nth-child(2) > div:nth-child(1) > span:nth-child(3)')
+        this.loginErrorPassword = page.locator('div.oxd-form-row:nth-child(3) > div:nth-child(1) > span:nth-child(3)')
         this.resetPasswordLink = page.locator('text=Forgot your password?')
         this.resetPasswordHeader = page.locator('h6:has-text("Reset Password")')
-        this.resetPasswordButton = page.locator('button[type="submit"]')
+        this.resetPasswordSubmitButton = page.locator('button[type="submit"]')
         this.resetPasswordUsernameInput = page.locator("input[name='username']")
         this.resetPasswordCancelButton = page.locator('button[type="button"]:has-text("Cancel")')
-        this.resetPasswordMessage = page.locator('h6:has-text("Reset Password link sent successfully")')
+        this.resetPasswordSuccessMessage = page.locator('h6:has-text("Reset Password link sent successfully")')
     }
 
-    // methods
-    async goToURL() {
-        await this.page.goto('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login')
+    /** 
+        Navigates to the login page URL. 
+    **/
+    async navigateToLoginPage(): Promise<void> {
+        await this.page.goto(URLs.login)
     }
 
-    async login(username: string, password: string) {
-        await this.usernameInput.fill(username)
-        await this.passwordInput.fill(password)
+    /**
+        Fills in the username and password fields and clicks login
+    **/
+    async login(username: string, password: string): Promise<void> {
+        await this.loginUsernameInput.fill(username)
+        await this.loginPasswordInput.fill(password)
         await this.loginButton.click()
     }
 
-    async verifyLoginSuccess() {
+    /**
+        Verifies that the user is redirected to the dashboard after login.
+    **/
+    async verifyLoginSuccess(): Promise<void> {
         // Assuming a successful login redirects to the dashboard
         await expect(this.page).toHaveURL(/.*dashboard/)
     }
 
-    async verifyErrorMessage(expectedMessage: string) {
-        await expect(this.errorMessage).toBeVisible()
-        await expect(this.errorMessage).toHaveText(expectedMessage)
+    /**
+        Verifies a general error alert message on login form.
+    **/
+    async verifyLoginErrorMessage(expectedMessage: string): Promise<void> {
+        await this.verifyFieldError(this.loginErrorMessage, expectedMessage)
     }
 
-    async verifyErrorMessageEmptyUsername(expectedMessageEmptyUsername: string) {
-        await expect(this.errorMessageEmptyUsername).toBeVisible()
-        await expect(this.errorMessageEmptyUsername).toHaveText(expectedMessageEmptyUsername)
+    /**
+        Verifies specific error message for empty username.
+    **/
+    async verifyEmptyUsernameError(expectedMessage: string): Promise<void> {
+        await this.verifyFieldError(this.loginErrorUsername, expectedMessage)
     }
 
-    async verifyErrorMessageEmptyPassword(expectedMessageEmptyPassword: string) {
-        await expect(this.errorMessageEmptyPassword).toBeVisible()
-        await expect(this.errorMessageEmptyPassword).toHaveText(expectedMessageEmptyPassword)
+    /**
+        Verifies specific error message for empty password.
+    **/
+    async verifyEmptyPasswordError(expectedMessage: string): Promise<void> {
+        await this.verifyFieldError(this.loginErrorPassword, expectedMessage)
     }
 
-    async verifyErrorMessageEmpty(expectedMessageEmptyUsername: string, expectedMessageEmptyPassword: string) {
-        // Check for both empty username error messages
-        await expect(this.errorMessageEmptyUsername).toBeVisible()
-        await expect(this.errorMessageEmptyUsername).toHaveText(expectedMessageEmptyUsername)
-        // Check for empty password error message
-        await expect(this.errorMessageEmptyPassword).toBeVisible()
-        await expect(this.errorMessageEmptyPassword).toHaveText(expectedMessageEmptyPassword)
+    /**
+        Verifies both username and password empty field errors.
+    **/
+    async verifyEmptyCredentialsErrors(usernameMsg: string, passwordMsg: string): Promise<void> {
+        await this.verifyFieldError(this.loginErrorUsername, usernameMsg)
+        await this.verifyFieldError(this.loginErrorPassword, passwordMsg)
     }
 
-    // reset password method
-    async resetPassword(usernameInput: string) {
+
+    /**
+        Initiates the reset password flow and submits the form
+    **/
+    async submitResetPasswordForm(username: string): Promise<void> {
         await this.resetPasswordLink.click()
         await expect(this.resetPasswordHeader).toBeVisible()
-        await this.resetPasswordUsernameInput.fill(usernameInput) // Fill with a valid username
-        await this.resetPasswordButton.click()
+        await this.resetPasswordUsernameInput.fill(username) // Fill with a valid username
+        await this.resetPasswordSubmitButton.click()
     }
 
-    // reset password assertion
-    async verifyResetPasswordMessage(resetPasswordMessage: string) {
-        await expect(this.resetPasswordMessage).toBeVisible()
-        await expect(this.resetPasswordMessage).toHaveText(resetPasswordMessage)
+
+    /**
+        Verifies that a success is shown fater password reset request.
+    **/
+    async verifyResetPasswordMessage(expectedMessage: string): Promise<void> {
+        await this.verifyFieldError(this.resetPasswordSuccessMessage, expectedMessage)
     }
 
-    // Cancel reset password
-    async cancelResetPassword() {
+
+    /**
+        Cancels the reset password process and returns to login
+    **/
+    async cancelResetPassword(): Promise<void> {
         await this.resetPasswordLink.click()
         await expect(this.resetPasswordHeader).toBeVisible()
         await this.resetPasswordCancelButton.click()
     }
 
-    // Verify reset password cancel assertion
-    async verifyResetPasswordCancel() {
-        await expect(this.page).toHaveURL('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login')
+
+    /**
+        Verifies the user is returned to login after canceling reset password.
+    **/
+    async verifyResetPasswordCancel(): Promise<void> {
+        await expect(this.page).toHaveURL(URLs.login)
     }
+
+
+    /**
+        Utility: Generic assertion for field error text visibility and content.
+    **/
+   private async verifyFieldError(locator: Locator, expectedText: string): Promise<void> {
+        await expect(locator).toBeVisible()
+        await expect(locator).toHaveText(expectedText)
+   }
 }

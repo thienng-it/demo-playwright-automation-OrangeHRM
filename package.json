@@ -12,27 +12,28 @@
   },
   "license": "ISC",
   "author": "Nguyen Thai Minh Thien",
-  "type": "commonjs",
-  "main": "index.js",
   "scripts": {
     "test:chrome": "playwright test --config=e2e-orangehrm.config.ts --project=Chromium",
     "test:firefox": "playwright test --config=e2e-orangehrm.config.ts --project=Firefox",
     "test:webkit": "playwright test --config=e2e-orangehrm.config.ts --project=Webkit",
     "test:all": "playwright test --config=e2e-orangehrm.config.ts",
-    "test:chrome:headed": "playwright test --config=e2e-orangehrm.config.ts --project=Chromium --headed",
-    "test:firefox:headed": "playwright test --config=e2e-orangehrm.config.ts --project=Firefox --headed",
-    "test:webkit:headed": "playwright test --config=e2e-orangehrm.config.ts --project=Webkit --headed",
+    "test:chrome:headed": "HEADED=true playwright test --config=e2e-orangehrm.config.ts --project=Chromium",
+    "test:firefox:headed": "HEADED=trueplaywright test --config=e2e-orangehrm.config.ts --project=Firefox",
+    "test:webkit:headed": "HEADED=true playwright test --config=e2e-orangehrm.config.ts --project=Webkit",
     "test:all:headed": "playwright test --config=e2e-orangehrm.config.ts --headed",
     "test": "playwright test --config=e2e-orangehrm.config.ts",
-    "allure:generate": "allure generate allure-results --clean -o allure-report",
-    "allure:open": "allure open allure-report",
+    "allure:generate": "allure generate ./allure-results -o ./allure-report --clean",
+    "allure:open": "allure open ./allure-report",
     "test:allure": "npm run test ; npm run allure:generate && npm run allure:open"
   },
   "dependencies": {
+    "@playwright/test": "^1.54.1",
     "prettier": "^3.6.2"
   },
   "devDependencies": {
-    "@playwright/test": "^1.54.1",
-    "allure-playwright": "^3.3.2"
+    "@types/node": "^24.0.14",
+    "allure-commandline": "^2.34.1",
+    "allure-playwright": "^3.3.2",
+    "dotenv": "^17.2.0"
   }
 }

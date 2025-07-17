@@ -1,0 +1,63 @@
+name: E2E Tests - Allure Reports
+
+on:
+  push:
+    branches-ignore:
+      - '!master' # ignore gh-pages
+
+env:
+  NODE_VERSION: 22
+  CI_BUILD_NUMBER: ${{ github.run_number }}
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  actions: read
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  acceptance-tests:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: https://registry.npmjs.org/
+      - name: install deps
+        run: |
+          npm i
+      - name: Run tests and generate allure reports
+        run: |
+          npm i && npx playwright install
+          npm run test:chrome ; npm run allure:generate
+      - name: Get Allure history
+        uses: actions/checkout@v2
+        if: always()
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Allure Report action
+        uses: simple-elf/allure-report-action@master
+        if: always()
+        with:
+          allure_results: allure-results
+          allure_history: allure-history/allure-history
+          keep_reports: 5
+
+      - name: Deploy report to Github Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v2
+        env:
+          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISH_BRANCH: gh-pages
+          PUBLISH_DIR: allure-history/allure-history

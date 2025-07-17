@@ -1,6 +1,8 @@
-import { defineConfig, PlaywrightTestConfig } from "playwright/test"
-import {Status} from "allure-js-commons"
-import * as os from "node:os"
+import { PlaywrightTestConfig } from "playwright/test"
+import * as dotenv from 'dotenv' 
+
+// Load the environment variables from .env file depending on NODE_ENV
+dotenv.config({ path: ".env.${process.env.NODE_ENV || 'production'}" })
 
 const config: PlaywrightTestConfig = {
     fullyParallel: true, // run tests in parallel
@@ -19,7 +21,8 @@ const config: PlaywrightTestConfig = {
         ignoreHTTPSErrors: true, // ignore HTTPS errors
         video: 'off',
         screenshot: 'off',
-        trace: 'on-first-retry'
+        trace: 'on-first-retry',
+        baseURL: process.env.BASE_URL || "https://opensource-demo.orangehrmlive.com",
     },
     projects: [
         {
