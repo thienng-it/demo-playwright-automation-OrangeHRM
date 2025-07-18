@@ -17,7 +17,7 @@ export class AddEmployeePage {
     this.firstNameInput = page.getByRole('textbox', { name: 'First Name' })
     this.middleNameInput = page.getByRole('textbox', { name: 'Middle Name' })
     this.lastNameInput = page.getByRole('textbox', { name: 'Last Name' })
-    this.employeeIdInput = page.getByRole('textbox').nth(4)
+    this.employeeIdInput = page.locator('//label[text()="Employee Id"]/parent::div/following-sibling::div/input')
     this.saveButton = page.getByRole('button', { name: 'Save' })
   }
 
@@ -31,11 +31,13 @@ export class AddEmployeePage {
   /**
    * Fills out the add employee form and saves.
    */
-  async fillEmployeeForm({firstName, middleName, lastName, employeeId}: {firstName: string, middleName: string, lastName: string, employeeId?: string}): Promise<void> {
+  async fillEmployeeForm({firstName, middleName, lastName, employeeId}: EmployeeInfo): Promise<void> {
       await this.firstNameInput.fill(firstName)
       await this.middleNameInput.fill(middleName)
       await this.lastNameInput.fill(lastName)
-      await this.employeeIdInput.fill(employeeId)
+      if (employeeId) {
+        await this.employeeIdInput.fill(employeeId)
+      }
       await this.saveButton.click()
   }
 }
