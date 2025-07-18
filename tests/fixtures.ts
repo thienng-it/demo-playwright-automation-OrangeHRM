@@ -1,45 +1,34 @@
-// tests/fixtures.ts
-import {test as base} from '@playwright/test'
-import {LoginPage} from '../pages/LoginPage'
-import { SystemUsersPage } from '../pages/Admin/SystemUsersPage'
-import { AddEmployeePage } from '../pages/PIM/AddEmployee'
-import { PersonalDetailsPage } from '../pages/PIM/PersonalDetailsPage'
-import { ViewEmployeeListPage } from '../pages/PIM/ViewEmployeeListPage'
+import { test as base, Page } from '@playwright/test'
+import { LoginPage } from '../pages/LoginPage'
+import { SearchPage } from '../pages/SearchPage'
+import { testData } from '../tests/test-data/searchEmployee'
 
-type PageObjectFixtures = {
-    loginPage: LoginPage
-    systemUserPage: SystemUsersPage,
-    addEmployeePage: AddEmployeePage,
-    personalDetailsPage: PersonalDetailsPage,
-    viewEmployeeListPage: ViewEmployeeListPage
-}
+// Define the shape of your fixtures
+type MyFixtures = {
+    loginPage: LoginPage;
+    searchPage: SearchPage;
+    pimPage: Page; // A fixture that navigates to the PIM page
+};
 
-export const test = base.extend<PageObjectFixtures>({
-    loginPage: async ({page}, use) => {
-        const loginPage = new LoginPage(page)
-        await loginPage.navigateToLoginPage()
-        await use(loginPage)
-    },
-    systemUserPage: async ({ page }, use) => {
-        const systemUserPage = new SystemUsersPage(page)
-        await use(systemUserPage)
-    },
-    
-    addEmployeePage: async ({ page }, use) => {
-    const addEmployee = new AddEmployeePage(page)
-    await addEmployee.navigateToAddEmployeePage()
-    await use(addEmployee)
+// Extend the base test to include your custom fixtures
+export const test = base.extend<MyFixtures>({
+    // Fixture for LoginPage
+    loginPage: async ({ page }, use) => {
+        await use(new LoginPage(page));
     },
 
-    personalDetailsPage: async ({ page }, use) => {
-    const personalDetailsPage = new PersonalDetailsPage(page)
-    await use(personalDetailsPage)
+    // Fixture for SearchPage
+    searchPage: async ({ page }, use) => {
+        await use(new SearchPage(page));
     },
 
-    viewEmployeeListPage: async ({ page }, use) => {
-    const viewEmployeeListPage = new ViewEmployeeListPage(page)
-    await use(viewEmployeeListPage)
-    }
-})
+    // Fixture that logs in and navigates to the PIM page
+    pimPage: async ({ page, loginPage, searchPage }, use) => {
+        await page.goto('/');
+        await loginPage.login(testData.username, testData.password);
+        await searchPage.navigateToPIM();
+        await use(page);
+    },
+});
 
-export {expect} from '@playwright/test'
+export { expect } from '@playwright/test';
