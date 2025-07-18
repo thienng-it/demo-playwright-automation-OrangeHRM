@@ -27,7 +27,9 @@
     "test:allure": "npm run test ; npm run allure:generate && npm run allure:open"
   },
   "dependencies": {
+    "@faker-js/faker": "^9.9.0",
     "@playwright/test": "^1.54.1",
+    "playwright-qase-reporter": "^2.1.4",
     "prettier": "^3.6.2"
   },
   "devDependencies": {

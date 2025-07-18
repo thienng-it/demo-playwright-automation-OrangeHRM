@@ -38,6 +38,8 @@ jobs:
         run: |
           npm i && npx playwright install
           npm run test:chrome ; npm run allure:generate
+        env:
+          QASE_TOKEN: ${{ secrets.QASE_TOKEN }}
       - name: Get Allure history
         uses: actions/checkout@v2
         if: always()

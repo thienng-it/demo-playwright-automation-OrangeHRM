@@ -16,11 +16,11 @@ const config: PlaywrightTestConfig = {
     workers: process.env.CI ? 1 : undefined,
     testDir: 'tests/e2e',
     use: {
-        headless: true, // run tests in headless mode
+        headless: process.env.HEADED ? false : true, // run tests in headless mode
         viewport: { width: 1280, height: 720 }, // set the viewport size
         ignoreHTTPSErrors: true, // ignore HTTPS errors
-        video: 'off',
-        screenshot: 'off',
+        video: 'retain-on-failure',
+        screenshot: 'only-on-failure',
         trace: 'on-first-retry',
         baseURL: process.env.BASE_URL || "https://opensource-demo.orangehrmlive.com",
     },
@@ -38,6 +38,25 @@ const config: PlaywrightTestConfig = {
             use: { browserName: 'webkit' }
         },
     ],
+}
+
+if (process.env.QASE_TOKEN) {
+    config.reporter = [[
+        'playwright-qase-reporter',
+        {
+            mode: 'testops',
+            testops: {
+                api: {
+                    token: process.env.QASE_TOKEN,
+                },
+                project: 'ORANGEHRM',
+                uploadAttachments: true,
+                run: {
+                    complete: true,
+                },
+            },
+        },
+    ]]
 }
 
 export default config
