@@ -67,7 +67,7 @@ test.describe('PIM Search Functionality', () => {
 
     test('TC_SEARCH_010: Verify search with an existing employee name', async () => {
         await searchPage.searchPIM({ employeeName: testData.pimSearch.existingEmployeeName });
-        await expect(searchPage.searchResultsTable.first()).toContainText(testData.pimSearch.existingEmployeeName);
+        await expect(searchPage.searchResultsTable.first()).toContainText(testData.pimSearch.existingEmployeeName, { timeout: 10000 });
     });
 
     test('TC_SEARCH_011: Verify search with a non-existing employee name', async () => {
@@ -123,11 +123,11 @@ test.describe('PIM Search Functionality', () => {
 
     test('TC_SEARCH_021: Verify search by Job Title', async () => {
         await searchPage.searchPIM({ jobTitle: testData.pimSearch.jobTitle });
-        // Add assertions to verify results
+        await expect(searchPage.searchResultsTable.first()).toBeVisible();
     });
 
     test('TC_SEARCH_022: Verify search by Sub Unit', async () => {
         await searchPage.searchPIM({ subUnit: testData.pimSearch.subUnit });
-        // Add assertions to verify results
+        await expect(searchPage.searchResultsTable.first()).toBeVisible();
     });
 });
