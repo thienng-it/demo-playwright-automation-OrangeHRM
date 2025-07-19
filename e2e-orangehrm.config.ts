@@ -14,7 +14,7 @@ const config: PlaywrightTestConfig = {
     retries: process.env.CI ? 2 : 0,
     /* Opt out of parallel tests on CI. */
     workers: process.env.CI ? 1 : undefined,
-    testDir: 'tests/e2e',
+    testDir: 'tests',
     use: {
         headless: process.env.HEADED ? false : true, // run tests in headless mode
         viewport: { width: 1280, height: 720 }, // set the viewport size
@@ -56,7 +56,7 @@ if (process.env.QASE_TOKEN) {
                 },
             },
         },
-    ]]
+    ], ['allure-playwright', {outputFolder: 'my-allure-results'}]]
 }
 
 export default config
