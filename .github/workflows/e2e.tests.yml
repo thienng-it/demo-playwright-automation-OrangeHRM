@@ -37,7 +37,7 @@ jobs:
       - name: Run tests and generate allure reports
         run: |
           npm i && npx playwright install
-          npm run test:chrome ; npm run allure:generate
+          npm run test:allure
         env:
           QASE_TOKEN: ${{ secrets.QASE_TOKEN }}
       - name: Get Allure history
